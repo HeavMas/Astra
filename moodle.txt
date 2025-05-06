@@ -1,0 +1,74 @@
+------first-srv-------
+----moodle----
+1)apt install apache2 php libapache2-mod-php   php-mysql php-xml  php-curl php-zip php-gd   php-intl php-mbstring php-pspell php-soap -y
+2)systemctl enable --now apache2
+3)systemctl status apache2
+4)apt install mariadb-server mariadb-client -y
+5)systemctl enable --now mariadb
+6)systemctl status mariadb
+7)mysql -u root
+#############
+CREATE DATABASE moodledb CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+CREATE USER 'moodle'@'localhost' IDENTIFIED BY 'P@ssw0rd';
+GRANT ALL PRIVILEGES ON moodledb.* TO 'moodle'@'localhost';
+FLUSH PRIVILEGES;
+EXIT;
+##############
+8)wget https://download.moodle.org/download.php/direct/stable500/moodle-latest-500.tgz
+9)tar xzf moodle-latest-500.tgz
+10)mkdir /var/moodledata
+11)chown -R www-data:www-data /var/www/html/moodle /var/moodledata
+12)chmod -R 755 /var/www/html/moodle
+13)nano /etc/apache2/sites-available/moodle.conf
+14)nano /etc/apache2/sites-available/moodle.conf
+###############################
+<VirtualHost *:80>
+    ServerAdmin admin@localhost
+    DocumentRoot /var/www/html/moodle
+    <Directory /var/www/html/moodle>
+        Options +FollowSymLinks
+        AllowOverride All
+        Require all granted
+    </Directory>
+    ErrorLog ${APACHE_LOG_DIR}/moodle_error.log
+    CustomLog ${APACHE_LOG_DIR}/moodle_access.log combined
+</VirtualHost>
+##############################
+15)a2ensite moodle.conf
+16)a2enmod rewrite
+17)systemctl reload apache2
+18)nano /etc/apache2/apache2.conf
+##############
+
+#AstraMode=on -> AstraMode off
+
+#############
+19)sudo systemctl reload apache2
+20)chown -R www-data:www-data /var/moodledata
+21)chmod 770 /var/moodledata
+22)nano /etc/php/8.2/apache2/php.ini ( ctrl + w  для поиска )
+#############
+
+;max_input_vars = 1000 -> max_input_vars = 5000
+
+##############
+23)systemctl restart apache2
+24)заполняем сайт по заданию
+Поле	Значение	Пояснение
+Database host	localhost	ваша БД на той же машине
+Database name	moodledb	вы создали базу с именем moodledb
+Database user	moodle	вы создали пользователя moodle
+Database password	P@ssw0rd	пароль, который вы ему задали
+Tables prefix	mdl_	можно оставить по умолчанию
+Database port	(пусто)	стандартный, оставляем пустым
+Unix socket	(пусто)	оставляем пустым, будет использоваться по умолчанию
+25) 
+Username: admin
+
+New password: P@ssw0rd
+
+Confirm password: P@ssw0rd
+
+
+
+

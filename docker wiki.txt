@@ -1,0 +1,82 @@
+1)apt install docker 
+2)apt install docker-compose
+3)nano wiki.yml
+#####################
+version: '3.7'
+
+services:
+  mariadb:
+    image: mariadb
+    container_name: mariadb
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpass
+      MYSQL_DATABASE: mediawiki
+      MYSQL_USER: wiki
+      MYSQL_PASSWORD: WikiP@ssw0rd
+    volumes:
+      - mariadb_data:/var/lib/mysql
+
+  wiki:
+    image: mediawiki
+    container_name: wiki
+    restart: unless-stopped
+    ports:
+      - "8080:80"
+    environment:
+      MEDIAWIKI_DB_TYPE: mysql
+      MEDIAWIKI_DB_HOST: mariadb
+      MEDIAWIKI_DB_NAME: mediawiki
+      MEDIAWIKI_DB_USER: wiki
+      MEDIAWIKI_DB_PASSWORD: WikiP@ssw0rd
+    depends_on:
+      - mariadb
+
+volumes:
+  mariadb_data:
+#####################
+4)docker compose -f wiki.yml up -d
+5)docker ps 
+6)http://<ip>:8080
+7)настройка пользователя по заданию ( в конце  Загрузить  ""LocalSettings.php "")
+8)nano LocalSettings.php ( добавить пхп которое скачали)
+9)docker-compose -f wiki.yml down
+10)nano wiki.yml ( добавить пхп в качестве волюма) 
+####################
+version: '3.7'
+
+services:
+  mariadb:
+    image: mariadb
+    container_name: mariadb
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpass
+      MYSQL_DATABASE: mediawiki
+      MYSQL_USER: wiki
+      MYSQL_PASSWORD: WikiP@ssw0rd
+    volumes:
+      - mariadb_data:/var/lib/mysql
+
+  wiki:
+    image: mediawiki
+    container_name: wiki
+    restart: unless-stopped
+    ports:
+      - "8080:80"
+    environment:
+      MEDIAWIKI_DB_TYPE: mysql
+      MEDIAWIKI_DB_HOST: mariadb
+      MEDIAWIKI_DB_NAME: mediawiki
+      MEDIAWIKI_DB_USER: wiki
+      MEDIAWIKI_DB_PASSWORD: WikiP@ssw0rd
+    depends_on:
+      - mariadb
+    volumes:
+      - ./LocalSettings.php:/var/www/html/LocalSettings.php:ro
+
+volumes:
+  mariadb_data:
+##########################
+10)docker-compose -f wiki.yml up -d --build
+11)http://<ip>:8080 (Заглавная страница нашей вики) 
