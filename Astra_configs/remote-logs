@@ -1,0 +1,12 @@
+/opt/*/*.log {
+    rotate 4
+    compress
+    missingok
+    notifempty
+    size 10M
+    create 640 root adm
+    sharedscripts
+    postrotate
+        systemctl reload rsyslog > /dev/null
+    endscript
+}
