@@ -1,0 +1,30 @@
+$TTL 86400
+@   IN  SOA ns1.it-sirius.any. admin.it-sirius.any. (
+        2025050502 ; serial
+        3600       ; refresh
+        1800       ; retry
+        604800     ; expire
+        86400 )    ; minimum
+
+    IN  NS  ns1.it-sirius.any.
+
+; NS-сервер
+ns1         IN  A   192.168.100.132
+
+; Реальные устройства
+first-srv   IN  A   192.168.100.132
+second-srv  IN  A   192.168.150.133
+
+; Условные
+first-rtr   IN  A   192.168.220.1
+second-rtr  IN  A   192.168.220.2
+first-cli   IN  A   192.168.220.10
+
+; CNAME
+moodle      IN  CNAME   first-rtr.it-sirius.any.
+wiki        IN  CNAME   first-rtr.it-sirius.any.
+
+; ==== SRV для Samba AD DC на second-srv ====
+_ldap._tcp.it-sirius.any.    3600 IN SRV 0 100 389   second-srv.it-sirius.any.
+_kerberos._udp.it-sirius.any.3600 IN SRV 0 100 88    second-srv.it-sirius.any.
+_gc._tcp.it-sirius.any.      3600 IN SRV 0 100 3268  second-srv.it-sirius.any.

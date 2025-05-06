@@ -1,0 +1,16 @@
+$TTL 86400
+@   IN  SOA ns1.it-sirius.any. admin.it-sirius.any. (
+        2025050501
+        3600
+        1800
+        604800
+        86400 )
+
+    IN  NS  ns1.it-sirius.any.
+
+; PTR-записи
+1     IN PTR  first-rtr.it-sirius.any.
+2     IN PTR  second-rtr.it-sirius.any.
+10    IN PTR  first-cli.it-sirius.any.
+132   IN PTR  first-srv.it-sirius.any.
+133   IN PTR  second-srv.it-sirius.any.

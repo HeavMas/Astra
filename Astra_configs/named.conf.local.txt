@@ -1,0 +1,11 @@
+zone "it-sirius.any" {
+    type master;
+    file "/etc/bind/zones/db.it-sirius.any";
+    allow-update { none; };
+};
+
+zone "100.168.192.in-addr.arpa" {
+    type master;
+    file "/etc/bind/zones/db.192.168.100";
+    allow-update { none; };
+};

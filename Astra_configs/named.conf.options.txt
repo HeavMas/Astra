@@ -1,0 +1,16 @@
+options {
+    directory "/var/cache/bind";
+
+    // пересылка всех незнакомых запросов
+    forwarders {
+        8.8.8.8;
+        1.1.1.1;
+    };
+
+    // разрешаем запросы из наших сетей
+    allow-query { any; };
+    recursion yes;
+
+    dnssec-validation no;
+    auth-nxdomain no;    # conform to RFC1035
+};

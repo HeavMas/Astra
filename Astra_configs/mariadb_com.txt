@@ -1,0 +1,5 @@
+CREATE DATABASE moodledb CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+CREATE USER 'moodle'@'localhost' IDENTIFIED BY 'P@ssw0rd';
+GRANT ALL PRIVILEGES ON moodledb.* TO 'moodle'@'localhost';
+FLUSH PRIVILEGES;
+EXIT;
