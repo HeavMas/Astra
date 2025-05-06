@@ -16,6 +16,7 @@ EXIT;
 ##############
 8)wget https://download.moodle.org/download.php/direct/stable500/moodle-latest-500.tgz
 9)tar xzf moodle-latest-500.tgz
+10)mv moodle /var/www/html/moodle
 10)mkdir /var/moodledata
 11)chown -R www-data:www-data /var/www/html/moodle /var/moodledata
 12)chmod -R 755 /var/www/html/moodle
