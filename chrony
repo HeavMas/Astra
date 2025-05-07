@@ -1,0 +1,54 @@
+First‑RTR: NTP‑сервер stratum 5 на RouterOS v7
+shell
+# перейдём в раздел настройки NTP‑сервера
+/system ntp server
+
+add enabled=yes use-local-clock=yes local-clock-stratum=5
+После этого NTP‑сервер запущен и будет отвечать на запросы клиентов со stratum 5 
+MikroTik
+.
+
+2. Second‑RTR: включение NTP‑клиента на RouterOS v7
+shell
+# убедимся, что клиент выключен
+/system ntp client print
+
+# включим клиент и укажем First‑RTR (192.168.100.1) как источник времени
+/system ntp client set enabled=yes primary-ntp=192.168.100.1
+Проверить статус клиента можно командой:
+
+shell
+/system ntp client print
+
+CLI-SRV
+  #!/bin/bash
+# установить chrony
+sudo apt update
+sudo apt install -y chrony
+
+# резервируем старый конфиг
+sudo cp /etc/chrony/chrony.conf /etc/chrony/chrony.conf.bak
+
+# пишем новый /etc/chrony/chrony.conf
+sudo tee /etc/chrony/chrony.conf > /dev/null <<EOF
+# синхронизируемся к First‑RTR
+server 192.168.100.1 iburst
+
+# файл для хранения дрейфа часов
+driftfile /var/lib/chrony/drift
+
+# если сдвиг >1s — делаем сразу, максимум 3 раза
+makestep 1.0 3
+
+# синхронизировать аппаратные часы при остановке
+rtcsync
+EOF
+
+# активируем и запускаем демон
+sudo systemctl enable --now chronyd
+
+# проверяем, что синхронизация идёт
+chronyc sources -v
+
+
+
