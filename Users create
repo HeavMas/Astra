@@ -1,0 +1,33 @@
+1.1. На серверах ASTRA Linux (First‑SRV, Second‑SRV)
+# 1) Добавляем пользователя sshuser с UID=1010 и домашней директорией /home/sshuser
+sudo useradd -m -u 1010 -s /bin/bash sshuser
+
+# 2) Задаём пароль (P@ssw0rd)
+echo 'sshuser:P@ssw0rd' | sudo chpasswd
+
+# 3) Даем право sudo без пароля: создаём файл в /etc/sudoers.d
+#echo 'sshuser ALL=(ALL) NOPASSWD: ALL' | sudo tee /etc/sudoers.d/sshuser
+#sudo chmod 440 /etc/sudoers.d/sshuser
+
+Настройка безопасного SSH‑доступа на ASTRA Linux
+На каждом сервере (First‑SRV, Second‑SRV):
+
+Открываем конфиг SSH:
+bash
+Копировать
+Редактировать
+#sudo cp /etc/ssh/sshd_config /etc/ssh/sshd_config.bak
+#sudo nano /etc/ssh/sshd_config
+Вносим изменения:
+yaml
+##
+Port 2024
+PermitRootLogin no
+AllowUsers sshuser
+MaxAuthTries 2
+Banner /etc/ssh/banner.txt
+##
+Создаём баннер:
+
+bash
+#echo 'Authorized access only' | sudo tee /etc/ssh/banner.txt
