@@ -1,0 +1,65 @@
+
+@
+1) configure
+2) interface gigabitethernet 1/0/1
+3) no switchport access vlan
+4) mode routerport
+5) ip address dhcp
+6) ip firewall disable
+000)  do commit & do confirm
+@
+1) interface gigabitethernet 1/0/2
+2)  mode routerport
+3) ip address 172.16.4.1/28 (согласно схеме)
+exit
+@
+1) interface gigabitethernet 1/0/3
+2) mode routerport
+3) ip address 172.16.5.1/28
+000)  do commit & do confirm
+@ nat
+1) domain lookup enable
+2) domain name-server 8.8.8.8
+3) nat source
+4) ruleset first (название не важно)
+5) to interface gigabitethernet 1/0/1 (Который в инет) 
+6) rule 11 (номер не важен)
+7) match source-address any
+8) action source-nat interface
+9) enable
+10) exit (несколько раз)
+Далее полученный адрес от сириуса ищем через команду:
+11) do sh ip interfaces
+IP address                                            Interface              Admin   Link    Type      Precedence
+---------------------------------------------------   --------------------   -----   -----   -------   -----------
+10.23.68.70/23                                        gi1/0/1                Up      Up      DHCP      -- (подходит)
+172.16.4.1/28                                         gi1/0/2                Up      Up      static    primary
+172.16.5.1/28                                         gi1/0/3                Up      Up      static    primaryx
+192.168.1.1/24                                        br1                    Up      Up      static    primary
+10.23.68.54/23                                        br2                    Up      Down    DHCP      -- (подходит, но линк Down)
+12) ip route 0.0.0.0/0 10.23.68.1 (укзаываем адрес шлюза из пола)
+000)  do commit & do confirm
+@
+1) router ospf 1
+2) router-id 1.1.1.1
+3) area 0.0.0.0
+4) network 172.16.4.0/28 (Сеть на первый микрот)
+5) network 172.16.5.0/28 (Сеть на второй микрот)
+6)(config-ospf-area) enable
+7) exit
+8) (config-ospf) enable
+000)  do commit & do confirm
+@
+1) interface gigabitethernet 1/0/2
+2) ip firewall disable
+3) ip ospf instance 1
+4) ip ospf network point-to-point
+5) ip ospf
+__________________Настроили для первого
+1) interface gigabitethernet 1/0/3
+2) ip firewall disable
+3) ip ospf instance 1
+4) ip ospf network point-to-point
+5) ip ospf
+________________Настроили для второго
+000)  do commit & do confirm
