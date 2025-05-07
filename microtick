@@ -1,0 +1,41 @@
+1) system identity set name=First-RTR
+2) ip address add address=172.16.4.2/28 interface=ether1
+3) ip route add dst-address=0.0.0.0/0 gateway=172.16.4.1
+
+ospf
+1) routing ospf instance add name=OSPF1 router-id=2.2.2.2 (ID указываем в виде айпишника, уникальный в каждом сетевом оборудовании)
+2) routing ospf network add network=172.16.4.0/28 area=backbone
+3) routing ospf interface add interface=ether1 network-type=point-to-point
+4) ip firewall filter print (отключаем правило)
+ 5    ;;; defconf: drop all not coming from LAN
+      chain=input action=drop in-interface-list=!LAN
+5) ip firewall filter disable numbers=5
+
+1) interface bridge port print
+2) interface bridge port remove numbers=0 (удаляем eth2)
+3) interface bridge port remove numbers=0 (удаляем eth3 по умолчанию они закрыты в бридж)
+4)  ip address add address=192.168.10.1/26 interface=ether2
+5) ip address add address=192.168.20.1/28 interface=ether3
+6) ip pool add name=dhcp-pool ranges=192.168.2.2-192.168.2.14
+7) ip dhcp-server add address-pool=dhcp-pool interface=ether3 disabled=no name=local-dhcp
+8) ip dhcp-server network add address=192.168.20.0/28 gateway=192.168.20.1 dns-server=8.8.8.8,1.1.1.1
+
+
+@2
+1) system identity set name=Second-RTR
+2) ip address add address=172.16.5.2/28 interface=ether1
+3) ip route add dst-address=0.0.0.0/0 gateway=172.16.5.1
+
+4) routing ospf instance add name=OSPF2 router-id=3.3.3.3
+5) routing ospf network add network=172.16.5.0/28 area=backbone
+6) routing ospf interface add interface=ether1 network-type=point-to-point
+7) ip firewall filter print
+8) ip firewall filter disable 5
+9) interface bridge port remove numbers=0
+10)  ip address add address=192.168.30.1/27 interface=ether2
+
+/user add name=net_admin password="P@$$word" group=full
+/ip service enable ssh
+
+/ip firewall nat add chain=dstnat dst-port=8080 protocol=tcp action=dst-nat to-addresses=192.168.150.2 to-ports=8080 (ip second-srv)
+/ip firewall nat add chain=dstnat dst-port=2024 protocol=tcp action=dst-nat to-addresses=192.168.150.2 to-ports=2024
